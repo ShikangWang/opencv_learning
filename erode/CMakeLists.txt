@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+find_package(OpenCV REQUIRED)
+project(erode)
+add_executable(erode erode.cpp)
+target_link_libraries(erode PRIVATE ${OpenCV_LIBS})

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(ball)
+add_executable(ball find_ball.cpp)
+find_package(OpenCV REQUIRED)
+target_link_libraries(ball PRIVATE ${OpenCV_LIBS})

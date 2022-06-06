@@ -1,0 +1,3 @@
+/home/wsk/codes/cv_learning/read_img/build/CMakeFiles/read.dir
+/home/wsk/codes/cv_learning/read_img/build/CMakeFiles/edit_cache.dir
+/home/wsk/codes/cv_learning/read_img/build/CMakeFiles/rebuild_cache.dir

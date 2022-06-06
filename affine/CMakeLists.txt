@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(affine)
+add_executable(affine affine.cpp)
+find_package(OpenCV REQUIRED)
+target_link_libraries(affine PRIVATE ${OpenCV_LIBS})

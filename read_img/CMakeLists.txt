@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(read_img)
+find_package(OpenCV REQUIRED)
+add_executable(read read_img.cpp)
+target_link_libraries(read PRIVATE ${OpenCV_LIBS})

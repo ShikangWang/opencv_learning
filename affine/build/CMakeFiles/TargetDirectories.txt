@@ -1,0 +1,3 @@
+/home/wsk/codes/cv_learning/affine/build/CMakeFiles/affine.dir
+/home/wsk/codes/cv_learning/affine/build/CMakeFiles/edit_cache.dir
+/home/wsk/codes/cv_learning/affine/build/CMakeFiles/rebuild_cache.dir

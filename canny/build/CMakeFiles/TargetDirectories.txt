@@ -1,0 +1,3 @@
+/home/wsk/codes/cv_learning/canny/build/CMakeFiles/canny.dir
+/home/wsk/codes/cv_learning/canny/build/CMakeFiles/edit_cache.dir
+/home/wsk/codes/cv_learning/canny/build/CMakeFiles/rebuild_cache.dir
