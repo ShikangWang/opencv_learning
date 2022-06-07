@@ -1,3 +1,0 @@
-/home/wsk/codes/cv_learning/find_ball/build/CMakeFiles/ball.dir
-/home/wsk/codes/cv_learning/find_ball/build/CMakeFiles/edit_cache.dir
-/home/wsk/codes/cv_learning/find_ball/build/CMakeFiles/rebuild_cache.dir
