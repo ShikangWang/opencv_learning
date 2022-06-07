@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/read_grey.dir/read_grey.cpp.o"
-  "CMakeFiles/read_grey.dir/read_grey.cpp.o.d"
   "read_grey"
   "read_grey.pdb"
 )
