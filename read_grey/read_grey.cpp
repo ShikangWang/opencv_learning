@@ -6,8 +6,7 @@ using namespace cv;
 
 int main()
 {
-    Mat img = imread("/home/wsk/codes/cv_learning/read_img/test.jpg");
-
+    Mat img = imread("/home/pi/Desktop/codes/opencv_learning/ball.jpg");
     Mat img_grey;
     cvtColor(img, img_grey, COLOR_BGR2GRAY);
     imshow("read_src", img);
