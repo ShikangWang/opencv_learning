@@ -1,0 +1,3 @@
+/home/pi/Desktop/codes/opencv_learning/uart/build/CMakeFiles/rebuild_cache.dir
+/home/pi/Desktop/codes/opencv_learning/uart/build/CMakeFiles/edit_cache.dir
+/home/pi/Desktop/codes/opencv_learning/uart/build/CMakeFiles/uart.dir
