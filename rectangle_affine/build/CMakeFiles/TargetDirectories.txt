@@ -1,0 +1,3 @@
+/home/wsk/codes/opencv_learning/rectangle_affine/build/CMakeFiles/rect.dir
+/home/wsk/codes/opencv_learning/rectangle_affine/build/CMakeFiles/edit_cache.dir
+/home/wsk/codes/opencv_learning/rectangle_affine/build/CMakeFiles/rebuild_cache.dir
