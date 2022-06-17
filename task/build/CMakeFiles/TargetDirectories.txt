@@ -1,0 +1,3 @@
+/home/wsk/codes/opencv_learning/task/build/CMakeFiles/rect_task.dir
+/home/wsk/codes/opencv_learning/task/build/CMakeFiles/edit_cache.dir
+/home/wsk/codes/opencv_learning/task/build/CMakeFiles/rebuild_cache.dir

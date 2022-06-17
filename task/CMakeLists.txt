@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(rect_task)
+add_executable(rect_task task.cpp)
+find_package(OpenCV REQUIRED)
+target_link_libraries(rect_task ${OpenCV_LIBS})
