@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace cv;
+string img_path = "../0.jpg";
 
 Mat img_undistort, img_src, img_mid, img_binary, img_affine, img_mid2, img_binary2, img_dst;
 
@@ -15,7 +16,7 @@ Point2f src_point[3];
 
 vector<vector<Point>> squares;
 
-int h_min1=25, h_max1=72, s_min1=13, s_max1=82, v_min1=101, v_max1=255, h_min2=0, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
+int h_min1=28, h_max1=72, s_min1=13, s_max1=82, v_min1=67, v_max1=255, h_min2=0, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
 
 double t=0;
 float fps;
@@ -45,8 +46,8 @@ int main()
     createTrackbar("h_max", "broad", &h_max1, 255, &Broad_trackbar);
     createTrackbar("s_min", "broad", &s_min1, 255, &Broad_trackbar);
     createTrackbar("s_max", "broad", &s_max1, 255, &Broad_trackbar);
-    createTrackbar("v_min", "broad", &v_min1, 255, &Broad_trackbar);
-    createTrackbar("v_max", "broad", &v_max1, 255, &Broad_trackbar);
+    //createTrackbar("v_min", "broad", &v_min1, 255, &Broad_trackbar);
+	//createTrackbar("v_max", "broad", &v_max1, 255, &Broad_trackbar);
 
     namedWindow("ball");
     createTrackbar("h_min", "ball", &h_min2, 255, &Ball_trackbar);
@@ -55,17 +56,18 @@ int main()
     createTrackbar("s_max", "ball", &s_max2, 255, &Ball_trackbar);
     createTrackbar("v_min", "ball", &v_min2, 255, &Ball_trackbar);
     createTrackbar("v_max", "ball", &v_max2, 255, &Ball_trackbar);
-    if(capture.isOpened())
+    //if(capture.isOpened())
     {
-        cout<<"capture is opened"<<endl;
-        while(1)
+        //cout<<"capture is opened"<<endl;
+       // while(1)
         {
             t = getTickCount();
-            capture >> img_undistort;
+            //capture >> img_undistort;
+			img_undistort = imread(img_path);
 			undistort(img_undistort, img_src, cameraMatrix, distCoeffs);
             imshow("src", img_src);
             if(img_src.empty())
-                break;//error occured
+                return -1;//error occured
             blur(img_src, img_mid, Size(7,7));
             //medianBlur(img_src, img_mid, 3);
             cvtColor(img_mid, img_mid, COLOR_BGR2HSV);
@@ -92,7 +94,7 @@ int main()
             if(img_affine.empty())
             {
                 cout<<"error"<<endl;
-                break;
+                return -1;
             }
             blur(img_affine, img_mid2, Size(7,7));
             cvtColor(img_affine, img_mid2, COLOR_BGR2HSV);
@@ -118,8 +120,8 @@ int main()
             t = (getTickCount()-t)/getTickFrequency();
             fps = 1.0/t;
             cout<<"FPS="<<fps<<endl;
-            if(waitKey(5) >= 0)
-                break;
+            if(waitKey(0) >= 0)
+                return 0;
         }
     }
 }
@@ -129,6 +131,10 @@ vector<vector<Point>> find_rect(Mat binary)
     
     Mat img_edge, img_dst;
     img_dst = img_src.clone();
+    int n_StructElementSize = 15;
+    Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
+    morphologyEx(binary, binary, MORPH_OPEN, element);
+
     Canny(binary, img_edge, 3, 9, 3);
 
     vector<vector<Point>>   contours;
