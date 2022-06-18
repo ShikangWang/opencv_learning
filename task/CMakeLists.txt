@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.1)
+add_definitions( -lwiringPi )
+project(rect_task)
+add_executable(rect_task task.cpp)
+find_package(OpenCV REQUIRED)
+find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
+target_link_libraries(rect_task ${OpenCV_LIBS})
+target_link_libraries(rect_task ${WIRINGPI_LIBRARIES})

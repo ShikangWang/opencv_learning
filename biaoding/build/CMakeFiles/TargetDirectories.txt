@@ -1,0 +1,3 @@
+/home/pi/Desktop/codes/opencv_learning/biaoding/build/CMakeFiles/rebuild_cache.dir
+/home/pi/Desktop/codes/opencv_learning/biaoding/build/CMakeFiles/edit_cache.dir
+/home/pi/Desktop/codes/opencv_learning/biaoding/build/CMakeFiles/biaoding.dir

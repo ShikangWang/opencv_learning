@@ -1,4 +1,4 @@
-# Install script for directory: /home/wsk/codes/opencv_learning/find_ball_uart
+# Install script for directory: /home/pi/Desktop/codes/opencv_learning/find_ball_uart
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/wsk/codes/opencv_learning/find_ball_uart/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/pi/Desktop/codes/opencv_learning/find_ball_uart/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

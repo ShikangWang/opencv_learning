@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(biaoding)
+add_executable(biaoding biaoding.cpp)
+find_package(OpenCV REQUIRED)
+target_link_libraries(biaoding PRIVATE ${OpenCV_LIBS})

@@ -6,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-#define USE_CAPTURE 0
+#define USE_CAPTURE 1
 #define IS_RASPI    0
 #define IS_DEBUG    0
 
@@ -18,6 +18,9 @@ using namespace cv;
 int g_min = 199;
 int min_h = 67, min_s = 52, min_v = 55, max_h = 153, max_s = 188, max_v = 255;
 Mat src, mid, dst, dst_dilate, dst_canny;
+
+double t=0;
+double fps;
 
 static void my_threshold(int,void*);
 
@@ -41,14 +44,15 @@ int main()
         cout<<"capture is opened"<<endl;
         while(1)
         {
-            #if USE_CAPTURE
+			t = (double)getTickCount(); 
+			#if USE_CAPTURE
             capture >> src;
             #else
             src = imread(img_path);
             #endif
             //blur(src, mid, Size(5,5));
             if(src.empty())   break;
-            //imshow("src", src);
+            imshow("src", src);
             medianBlur(src, mid, 7);
             //imshow("blur", mid);
             cvtColor(mid, mid, COLOR_BGR2HSV);
@@ -62,7 +66,7 @@ int main()
             createTrackbar("max_s", "binary", &max_s, 255, Trackbar);
             createTrackbar("max_v", "binary", &max_v, 255, Trackbar);
             #endif
-            imshow("binary", dst);
+            //imshow("binary", dst);
     
     
             find_circle(0, 0);
@@ -72,8 +76,11 @@ int main()
             // imshow("binary", dst);
             // find_circle(0,0);
 
-            if(waitKey(0) >= 0)
+            if(waitKey(5) >= 0)
                 break;
+			t=((double)getTickCount() - t)/getTickFrequency();
+			fps = 1.0 / t;
+			cout<<"fps:"<<fps<<endl;
         }
     }
     return 0;
@@ -84,7 +91,7 @@ static void my_threshold(int, void*)
     Mat img_src = mid.clone();
     Mat img_dst;
     threshold(mid, dst, g_min, 255, THRESH_BINARY);
-    imshow("binary", dst);
+    // imshow("binary", dst);
     find_circle(0,0);
 }
 
@@ -93,9 +100,9 @@ static void find_circle(int, void*)
     int n_StructElementSize = 15;
     Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
     morphologyEx(dst, dst_dilate, MORPH_CLOSE, element);
-    imshow("dilate", dst_dilate);
+    //imshow("dilate", dst_dilate);
     Canny(dst_dilate, dst_canny, 3, 9, 3);
-    imshow("canny", dst_canny);
+    //imshow("canny", dst_canny);
     vector<Vec3f> circles;
     Mat src_circle = src.clone();
     HoughCircles(dst_canny, circles, HOUGH_GRADIENT, 1.5, 100, 200, 35, 150, 250);//change
@@ -116,6 +123,6 @@ static void find_circle(int, void*)
 static void Trackbar(int, void*)
 {
     inRange(mid, Scalar(min_h, min_s, min_v), Scalar(max_h, max_s, max_v), dst);
-    imshow("binary", dst);
+    //imshow("binary", dst);
     find_circle(0, 0);
 }

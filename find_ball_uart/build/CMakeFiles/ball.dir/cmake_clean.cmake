@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ball.dir/find_ball.cpp.o"
-  "CMakeFiles/ball.dir/find_ball.cpp.o.d"
   "ball"
   "ball.pdb"
 )

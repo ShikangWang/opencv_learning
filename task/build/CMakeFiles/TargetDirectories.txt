@@ -1,0 +1,3 @@
+/home/pi/Desktop/codes/opencv_learning/task/build/CMakeFiles/edit_cache.dir
+/home/pi/Desktop/codes/opencv_learning/task/build/CMakeFiles/rebuild_cache.dir
+/home/pi/Desktop/codes/opencv_learning/task/build/CMakeFiles/rect_task.dir
