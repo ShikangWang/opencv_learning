@@ -14,9 +14,8 @@ vector<vector<Point>> find_rect(Mat binary);
 
 Point2f src_point[3];
 
-vector<vector<Point>> squares;
 
-int h_min1=28, h_max1=72, s_min1=13, s_max1=82, v_min1=67, v_max1=255, h_min2=0, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
+int h_min1=17, h_max1=72, s_min1=13, s_max1=97, v_min1=65, v_max1=255, h_min2=65, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
 
 double t=0;
 float fps;
@@ -46,8 +45,8 @@ int main()
     createTrackbar("h_max", "broad", &h_max1, 255, &Broad_trackbar);
     createTrackbar("s_min", "broad", &s_min1, 255, &Broad_trackbar);
     createTrackbar("s_max", "broad", &s_max1, 255, &Broad_trackbar);
-    //createTrackbar("v_min", "broad", &v_min1, 255, &Broad_trackbar);
-	//createTrackbar("v_max", "broad", &v_max1, 255, &Broad_trackbar);
+    createTrackbar("v_min", "broad", &v_min1, 255, &Broad_trackbar);
+	createTrackbar("v_max", "broad", &v_max1, 255, &Broad_trackbar);
 
     namedWindow("ball");
     createTrackbar("h_min", "ball", &h_min2, 255, &Ball_trackbar);
@@ -56,20 +55,20 @@ int main()
     createTrackbar("s_max", "ball", &s_max2, 255, &Ball_trackbar);
     createTrackbar("v_min", "ball", &v_min2, 255, &Ball_trackbar);
     createTrackbar("v_max", "ball", &v_max2, 255, &Ball_trackbar);
-    //if(capture.isOpened())
+    if(capture.isOpened())
     {
-        //cout<<"capture is opened"<<endl;
-       // while(1)
+        cout<<"capture is opened"<<endl;
+        while(1)
         {
             t = getTickCount();
-            //capture >> img_undistort;
-			img_undistort = imread(img_path);
+            capture >> img_undistort;
+			//img_undistort = imread(img_path);
 			undistort(img_undistort, img_src, cameraMatrix, distCoeffs);
             imshow("src", img_src);
             if(img_src.empty())
-                return -1;//error occured
-            blur(img_src, img_mid, Size(7,7));
-            //medianBlur(img_src, img_mid, 3);
+                break;//error occured
+            //blur(img_src, img_mid, Size(7,7));
+            medianBlur(img_src, img_mid, 3);
             cvtColor(img_mid, img_mid, COLOR_BGR2HSV);
             inRange(img_mid, Scalar(h_min1, s_min1, v_min1), Scalar(h_max1, s_max1, v_max1), img_binary);
             imshow("broad", img_binary);
@@ -80,7 +79,7 @@ int main()
                 src_point[0] = rect[0][0];
                 src_point[1] = rect[0][1];
                 src_point[2] = rect[0][2];
-                Point2f dst_point[3] = {Point2f(0,0), Point2f(0, img_src.rows), Point2f(img_src.cols, img_src.cols)};
+                Point2f dst_point[3] = {Point2f(0,0), Point2f(0, img_src.rows), Point2f(img_src.cols, img_src.rows)};
                 Mat M2 = getAffineTransform(src_point, dst_point);
                 Size size2(img_src.cols, img_src.rows);
                 warpAffine(img_src, img_affine, M2, size2);
@@ -94,7 +93,7 @@ int main()
             if(img_affine.empty())
             {
                 cout<<"error"<<endl;
-                return -1;
+                break;
             }
             blur(img_affine, img_mid2, Size(7,7));
             cvtColor(img_affine, img_mid2, COLOR_BGR2HSV);
@@ -104,8 +103,9 @@ int main()
             Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
             morphologyEx(img_binary2, img_mid2, MORPH_CLOSE, element);
             Canny(img_mid2, img_mid2, 3,9,3);
+			imshow("before circle", img_mid2);
             vector<Vec3f> circles;
-            HoughCircles(img_mid2, circles, HOUGH_GRADIENT, 1.5, 100, 200, 50, 5, 50);
+            HoughCircles(img_mid2, circles, HOUGH_GRADIENT, 1.5, 100, 200, 20, 0, 50);
             for(size_t i=0; i<circles.size(); i++)
             {
                 Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
@@ -120,7 +120,7 @@ int main()
             t = (getTickCount()-t)/getTickFrequency();
             fps = 1.0/t;
             cout<<"FPS="<<fps<<endl;
-            if(waitKey(0) >= 0)
+            if(waitKey(5) >= 0)
                 return 0;
         }
     }
@@ -128,24 +128,25 @@ int main()
 
 vector<vector<Point>> find_rect(Mat binary)
 {
-    
+	vector<vector<Point>> squares;    
     Mat img_edge, img_dst;
     img_dst = img_src.clone();
-    int n_StructElementSize = 15;
+    int n_StructElementSize = 7;
     Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
     morphologyEx(binary, binary, MORPH_OPEN, element);
+    imshow("binary", binary);
 
-    Canny(binary, img_edge, 3, 9, 3);
+    //Canny(binary, img_edge, 3, 9, 3);
 
     vector<vector<Point>>   contours;
     vector<Vec4i>    hierachy; 
-    findContours(img_edge, contours, hierachy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    findContours(binary, contours, hierachy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     vector<Point> approx;
     for(size_t i=0; i < contours.size(); i++)
     {
         //cout<<contours[i]<<endl;
-        approxPolyDP(contours[i], approx, 10, true);
+        approxPolyDP(contours[i], approx, 100, true);
         //cout<<"size = "<<approx.size()<<endl;
         //cout<<approx<<endl;
         // for(size_t i=0; i<approx.size(); i++)
@@ -163,7 +164,11 @@ vector<vector<Point>> find_rect(Mat binary)
                 approx[1] = approx[0];
                 approx[0] = temp;
             }
-            squares.push_back(approx);
+            if(approx[2].x-approx[0].x>250)
+            {
+                squares.push_back(approx);
+                //cout<<approx<<endl;
+            }
         }
     }
     for(size_t i=0; i<squares.size(); i++)
