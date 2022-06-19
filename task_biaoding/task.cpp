@@ -4,6 +4,8 @@
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
 
+#define IS_RASPI 0
+
 using namespace std;
 using namespace cv;
 string img_path = "../0.jpg";
@@ -12,11 +14,8 @@ Mat img_undistort, img_src, img_mid, img_binary, img_affine, img_mid2, img_binar
 
 vector<vector<Point>> find_rect(Mat binary);
 
-Point2f src_point[3];
 
-vector<vector<Point>> squares;
-
-int h_min1=26, h_max1=72, s_min1=13, s_max1=97, v_min1=65, v_max1=255, h_min2=0, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
+int h_min1=17, h_max1=72, s_min1=13, s_max1=97, v_min1=65, v_max1=255, h_min2=65, h_max2=255, s_min2=0, s_max2=255, v_min2=0, v_max2=255;
 
 double t=0;
 float fps;
@@ -37,8 +36,10 @@ int main()
     distCoeffs.at <double>(0,0)=-0.4188;
     distCoeffs.at <double>(0,1)=0.1903;
 
-    //wiringPiSetup();
-	//int fd = serialOpen("/dev/ttyAMA1", 9600);
+    #if IS_RASPI
+    wiringPiSetup();
+	int fd = serialOpen("/dev/ttyAMA1", 9600);
+    #endif
 	VideoCapture capture;
     capture.open(0);
     namedWindow("broad");
@@ -68,51 +69,58 @@ int main()
             imshow("src", img_src);
             if(img_src.empty())
                 break;//error occured
-            blur(img_src, img_mid, Size(7,7));
-            //medianBlur(img_src, img_mid, 3);
+                //return -1;
+            //blur(img_src, img_mid, Size(7,7));
+            medianBlur(img_src, img_mid, 11);//able to adjust
+            //imshow("blur", img_mid);
             cvtColor(img_mid, img_mid, COLOR_BGR2HSV);
             inRange(img_mid, Scalar(h_min1, s_min1, v_min1), Scalar(h_max1, s_max1, v_max1), img_binary);
             imshow("broad", img_binary);
+
+
             vector<vector<Point>> rect; //find_rect
             rect = find_rect(img_binary);
+            static Point2f src_point[3] = {Point2f(0,0), Point2f(0, img_src.rows), Point2f(img_src.cols, img_src.rows)};
             if(rect.size() == 1)
             {
                 src_point[0] = rect[0][0];
                 src_point[1] = rect[0][1];
                 src_point[2] = rect[0][2];
-                Point2f dst_point[3] = {Point2f(0,0), Point2f(0, img_src.rows), Point2f(img_src.cols, img_src.rows)};
-                Mat M2 = getAffineTransform(src_point, dst_point);
-                Size size2(img_src.cols, img_src.rows);
-                warpAffine(img_src, img_affine, M2, size2);
+
             }
-            else
-            {
-                img_affine = img_src;
-            }
+            Point2f dst_point[3] = {Point2f(0,0), Point2f(0, img_src.rows), Point2f(img_src.rows, img_src.rows)};
+            Mat M2 = getAffineTransform(src_point, dst_point);
+            Size size2(img_src.cols, img_src.rows);
+            warpAffine(img_src, img_affine, M2, size2);
+            img_affine = img_affine(Range(0,img_affine.rows), Range(0,img_affine.rows));
 
 
             if(img_affine.empty())
             {
                 cout<<"error"<<endl;
                 break;
+                //return -1;
             }
-            blur(img_affine, img_mid2, Size(7,7));
+            //blur(img_affine, img_mid2, Size(7,7));
             cvtColor(img_affine, img_mid2, COLOR_BGR2HSV);
             inRange(img_mid2,Scalar(h_min2,s_min2, v_min2), Scalar(h_max2, s_max2, v_max2), img_binary2);
             imshow("ball", img_binary2);
-            int n_StructElementSize = 15;
-            Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
-            morphologyEx(img_binary2, img_mid2, MORPH_CLOSE, element);
-            Canny(img_mid2, img_mid2, 3,9,3);
+            // int n_StructElementSize = 15;
+            // Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
+            // morphologyEx(img_binary2, img_mid2, MORPH_CLOSE, element);
+            Canny(img_binary2, img_mid2, 3,9,3);
+			imshow("before circle", img_mid2);
             vector<Vec3f> circles;
-            HoughCircles(img_mid2, circles, HOUGH_GRADIENT, 1.5, 100, 200, 50, 5, 50);
+            HoughCircles(img_mid2, circles, HOUGH_GRADIENT, 1.5, 100, 200, 50, 0, 50);//able to adjust
             for(size_t i=0; i<circles.size(); i++)
             {
                 Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
                 int radius = circles[i][2];
                 circle(img_affine, center, 3, Scalar(0,0,255), -1);
                 circle(img_affine, center, radius, Scalar(0,0,255), 3);
-				//serialPrintf(fd, "%d,%d", circles[i][0], circles[i][1]);
+                #if IS_RASPI
+				serialPrintf(fd, "%d,%d", circles[i][0], circles[i][1]);
+                #endif
             }
             imshow("result", img_affine);
 
@@ -128,25 +136,25 @@ int main()
 
 vector<vector<Point>> find_rect(Mat binary)
 {
-    
+	vector<vector<Point>> squares;    
     Mat img_edge, img_dst;
     img_dst = img_src.clone();
-    int n_StructElementSize = 7;
+    int n_StructElementSize = 15;//able to adjust
     Mat element = getStructuringElement(MORPH_RECT, Size(2*n_StructElementSize+1, 2*n_StructElementSize+1), Point(n_StructElementSize, n_StructElementSize));
     morphologyEx(binary, binary, MORPH_OPEN, element);
     imshow("binary", binary);
 
-    Canny(binary, img_edge, 3, 9, 3);
+    //Canny(binary, img_edge, 3, 9, 3);
 
     vector<vector<Point>>   contours;
     vector<Vec4i>    hierachy; 
-    findContours(img_edge, contours, hierachy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    findContours(binary, contours, hierachy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     vector<Point> approx;
     for(size_t i=0; i < contours.size(); i++)
     {
         //cout<<contours[i]<<endl;
-        approxPolyDP(contours[i], approx, 10, true);
+        approxPolyDP(contours[i], approx, 100, true);
         //cout<<"size = "<<approx.size()<<endl;
         //cout<<approx<<endl;
         // for(size_t i=0; i<approx.size(); i++)
