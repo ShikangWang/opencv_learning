@@ -1,0 +1,3 @@
+/home/pi/Desktop/codes/opencv_learning/thread/build/CMakeFiles/rebuild_cache.dir
+/home/pi/Desktop/codes/opencv_learning/thread/build/CMakeFiles/edit_cache.dir
+/home/pi/Desktop/codes/opencv_learning/thread/build/CMakeFiles/thread.dir

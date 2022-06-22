@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.1)
+project(thread)
+set(CMAKE_C_FLAGS)
+add_executable(thread demo.cpp)
+target_link_libraries(thread pthread)

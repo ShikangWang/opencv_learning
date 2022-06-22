@@ -6,20 +6,10 @@
 
 #IncludeRegexTransform: 
 
-/home/pi/Desktop/codes/opencv_learning/task_biaoding/task.cpp
+/home/pi/Desktop/codes/opencv_learning/camera_test/test.cpp
 opencv2/opencv.hpp
 -
 iostream
--
-string.h
--
-thread
--
-unistd.h
--
-wiringPi.h
--
-wiringSerial.h
 -
 
 /usr/local/include/opencv4/opencv2/calib3d.hpp
