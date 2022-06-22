@@ -90,7 +90,7 @@ void thread_deal()
 		imshow("before circle", img_mid2);
         vector<Vec3f> circles;
         HoughCircles(img_mid2, circles, HOUGH_GRADIENT, 1.5, 100, 200, 35, 0, 20);//able to adjust
-        for(size_t i=0; i<1; i++)
+        for(size_t i=0; i<circles.size(); i++)
         {
             Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
             int radius = circles[i][2];
@@ -107,7 +107,7 @@ void thread_deal()
         t = (getTickCount()-t)/getTickFrequency();
         fps = 1.0/t;
         cout<<"FPS="<<fps<<endl;
-        if(waitKey(5) >= 0)
+        if(waitKey(1) >= 0)
             return_flag=1;
         usleep(1000);
     }
